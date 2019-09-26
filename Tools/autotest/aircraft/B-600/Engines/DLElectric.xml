@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- DLE222 Electrical Approximation -->
+<!-- 21.5 hp engine -->
+<!-- one horsepower equals 745.69987 Watts -->
+
+<electric_engine name="DLElectric">
+	<power unit="HP">  21.50 </power>
+	<!-- 
+	<power unit="HP">
+		<function>
+			<product>
+				 XXX Fudge factor for Avalon, you've got to figure out why
+					 it's borked later XXX
+
+				<value> 1.0 </value>
+				<value>21.50 </value>
+				<difference>
+					<quotient>
+						<property>atmosphere/rho-slugs_ft3</property>
+						<property>atmosphere/rho-sl-slugs_ft3</property>
+					</quotient>
+					<quotient>
+						<difference>
+							<value>
+								1
+							</value>
+							<quotient>
+								<property>atmosphere/rho-slugs_ft3</property>
+								<property>atmosphere/rho-sl-slugs_ft3</property>
+							</quotient>
+						</difference>
+						<value> 7.55 </value>
+					</quotient>
+				</difference>
+			</product>
+		</function>
+	</power>
+	-->
+</electric_engine>

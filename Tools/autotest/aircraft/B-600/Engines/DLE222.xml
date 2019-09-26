@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+  File:     DLE222.xml
+  Author:   Aero-Matic v 0.83
+
+  Inputs:
+    name:           DLE222
+    type:           piston
+    power:          21.5 hp
+    augmented?      no
+    injected?       no
+-->
+
+<piston_engine name="DLE222">
+
+  <!-- Known -->
+  <displacement unit="CC"> 222.5 </displacement>
+  <maxhp>        21.50 </maxhp>
+  <maxrpm>      7500.0 </maxrpm>
+  <stroke unit="M">  0.035 </stroke>
+  <bore unit="M">    0.045 </bore>
+  <cylinders>         4.0  </cylinders>
+  <compression-ratio>  7.6 </compression-ratio>
+  <!-- 2-stroke not supported yet :c -->
+  <cycles>         4.0 </cycles>
+
+  <!-- Assumed -->
+  <minmp unit="INHG">         10.0 </minmp>
+  <maxmp unit="INHG">         28.5 </maxmp>
+  <idlerpm>      700.0 </idlerpm>
+  <sparkfaildrop>  0.1 </sparkfaildrop>
+  <volumetric-efficiency> 0.85 </volumetric-efficiency>
+  <man-press-lag> 0.1 </man-press-lag>
+  <static-friction  unit="HP"> 0.11 </static-friction>
+ <!-- Defining <bsfc> over-rides the built-in horsepower calculations -->
+ <!--<bsfc>           0.45 </bsfc>-->
+ <!-- Testing -->
+<maxthrottle> 1.0 </maxthrottle>
+<minthrottle> 0.1 </minthrottle>
+</piston_engine>
