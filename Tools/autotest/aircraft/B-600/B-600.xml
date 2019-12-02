@@ -197,6 +197,21 @@
 
  </ground_reactions>
 
+ <external_reactions>
+	 <force name="kick" frame="BODY" unit="N">
+		 <location unit="M">
+			 <x> 0 </x>
+			 <y> 0 </y>
+			 <z> 0 </z>
+		 </location>
+		 <direction>
+			 <x> 0 </x>
+			 <y> 1 </y>
+			 <z> 0 </z>
+		 </direction>
+	 </force>
+ </external_reactions>
+
  <propulsion>
 
 	 <engine file="DLElectric">
@@ -1175,4 +1190,6 @@
 
  <!-- Visualiser Output -->
  <!-- <output name="10.0.1.1" type="FLIGHTGEAR" port="7127" protocol="UDP" rate="200"/> -->
+ <!-- Telnet Interface -->
+ <input port="1137"/>
 </fdm_config>
