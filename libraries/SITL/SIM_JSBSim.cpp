@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -79,10 +80,33 @@ bool JSBSim::create_templates(void)
     asprintf(&jsbsim_script, "%s/jsbsim_start_%u.xml", autotest_dir, instance);
     asprintf(&jsbsim_fgout,  "%s/jsbsim_fgout_%u.xml", autotest_dir, instance);
 
+    char *jsbsim_extra;
+    asprintf(&jsbsim_extra,  "%s/jsbsim_extra_%u.xml", autotest_dir, instance);
+
     printf("JSBSim_script: '%s'\n", jsbsim_script);
     printf("JSBSim_fgout: '%s'\n", jsbsim_fgout);
+    printf("JSBSim_extra: '%s'\n", jsbsim_extra);
 
-    FILE *f = fopen(jsbsim_script, "w");
+    char *extra_script = (char *)"";
+    FILE *f = fopen(jsbsim_extra, "r");
+    if (f) {
+        fseek(f, 0, SEEK_END);
+        long fsize = ftell(f);
+        fseek(f, 0, SEEK_SET);
+
+        extra_script = (char *)malloc(fsize + 1);
+        fread(extra_script, 1, fsize, f);
+        extra_script[fsize] = 0;
+        fclose(f);
+    } else {
+        f = fopen(jsbsim_extra, "w");
+        if (f) {
+            fprintf(f, "<!-- Edit this file to add extra scripting to %s -->", jsbsim_script);
+            fclose(f);
+        }
+    }
+
+    f = fopen(jsbsim_script, "w");
     if (f == nullptr) {
         AP_HAL::panic("Unable to create jsbsim script %s", jsbsim_script);
     }
@@ -124,19 +148,8 @@ bool JSBSim::create_templates(void)
 "      <notify/>\n"
 "    </event>\n"
 "\n"
-//"    <event name=\"Kick\">\n"
-//"      <condition>velocities/u-fps ge 60.0</condition>\n"
-//"      <set name=\"external_reactions/kick/magnitude\" value=\"100\"/>\n"
-//"      <notify/>\n"
-//"    </event>\n"
-//"\n"
-//"    <event name=\"End Kick\">\n"
-//"      <condition>velocities/u-fps ge 60.0</condition>\n"
-//"      <delay>1</delay>\n"
-//"      <set name=\"external_reactions/kick/magnitude\" value=\"0\"/>\n"
-//"      <notify/>\n"
-//"    </event>\n"
-//"\n"
+"%s"
+"\n"
 "  </run>\n"
 "\n"
 "</runscript>\n"
@@ -145,8 +158,13 @@ bool JSBSim::create_templates(void)
             jsbsim_model,
             jsbsim_model,
             control_port,
-            1.0/rate_hz);
+            1.0/rate_hz,
+            extra_script);
     fclose(f);
+
+    if (extra_script[0] != 0) {
+        free(extra_script);
+    }
 
     f = fopen(jsbsim_fgout, "w");
     if (f == nullptr) {
