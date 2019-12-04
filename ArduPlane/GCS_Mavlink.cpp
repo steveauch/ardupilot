@@ -136,6 +136,13 @@ void GCS_MAVLINK_Plane::send_attitude() const
         omega.x,
         omega.y,
         omega.z);
+
+    if (plane.steer_state.locked_course) {
+        gcs().send_text(MAV_SEVERITY_WARNING, "Steering course locked, err: %d.", plane.steer_state.locked_course_err);
+    } else {
+        gcs().send_text(MAV_SEVERITY_WARNING, "Steering course NOT locked.");
+    }
+
 }
 
 void Plane::send_aoa_ssa(mavlink_channel_t chan)
