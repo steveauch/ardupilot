@@ -137,10 +137,10 @@ void GCS_MAVLINK_Plane::send_attitude() const
         omega.y,
         omega.z);
 
-    if (plane.steer_state.locked_course) {
-        gcs().send_text(MAV_SEVERITY_WARNING, "Steering course locked, err: %d.", plane.steer_state.locked_course_err);
+    if (plane.steer_state.locked_course && plane.channel_roll->get_control_in() == 0 && fabsf(plane.relative_altitude) < plane.g.ground_steer_alt) {
+        gcs().send_text(MAV_SEVERITY_WARNING, "Steering, err: %.3f deg", plane.steer_state.locked_course_err * 0.01f);
     } else {
-        gcs().send_text(MAV_SEVERITY_WARNING, "Steering course NOT locked.");
+        gcs().send_text(MAV_SEVERITY_WARNING, "Ground steering not active.");
     }
 
 }
@@ -182,6 +182,20 @@ void GCS_MAVLINK_Plane::send_nav_controller_output() const
             (plane.control_mode != &plane.mode_qstabilize) ? quadplane.pos_control->get_alt_error() * 1.0e-2f : 0,
             plane.airspeed_error * 100,
             wp_nav_valid ? quadplane.wp_nav->crosstrack_error() : 0);
+    } else if (plane.steer_state.locked_course && plane.channel_roll->get_control_in() == 0 && fabsf(plane.relative_altitude) < plane.g.ground_steer_alt) {
+        // Hijack nav_bearing_cd for steering bearing target
+        const AP_Navigation *nav_controller = plane.nav_controller;
+        mavlink_msg_nav_controller_output_send(
+            chan,
+            plane.nav_roll_cd * 0.01f,
+            plane.nav_pitch_cd * 0.01f,
+            (AP::ahrs().yaw_sensor + plane.steer_state.locked_course_err) * 0.01f,
+            //plane.steer_state.hold_course_cd,
+            nav_controller->target_bearing_cd() * 0.01f,
+            MIN(plane.auto_state.wp_distance, UINT16_MAX),
+            plane.altitude_error_cm * 0.01f,
+            plane.airspeed_error * 100,
+            nav_controller->crosstrack_error());
     } else {
         const AP_Navigation *nav_controller = plane.nav_controller;
         mavlink_msg_nav_controller_output_send(
