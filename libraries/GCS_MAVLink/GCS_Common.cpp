@@ -2114,6 +2114,12 @@ void GCS_MAVLINK::send_autopilot_version() const
     );
 }
 
+void GCS_MAVLINK::send_steering() const
+{
+    // Do nothing, this is overridden by plane
+    send_text(MAV_SEVERITY_INFO, "GCS_MAVLINK::send_steering does nothing");
+}
+
 
 /*
   send LOCAL_POSITION_NED message
@@ -4339,6 +4345,11 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
     case MSG_AUTOPILOT_VERSION:
         CHECK_PAYLOAD_SIZE(AUTOPILOT_VERSION);
         send_autopilot_version();
+        break;
+
+    case MSG_STEERING:
+        CHECK_PAYLOAD_SIZE(STEERING);
+        send_steering();
         break;
 
     case MSG_ESC_TELEMETRY: {

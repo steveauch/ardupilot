@@ -196,6 +196,7 @@ public:
     void send_opticalflow();
     virtual void send_attitude() const;
     void send_autopilot_version() const;
+    virtual void send_steering() const;
     void send_extended_sys_state() const;
     void send_local_position() const;
     void send_vfr_hud();
