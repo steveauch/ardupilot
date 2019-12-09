@@ -28,6 +28,7 @@ MAV_MODE GCS_MAVLINK_Plane::base_mode() const
         break;
     case Mode::Number::STABILIZE:
     case Mode::Number::FLY_BY_WIRE_A:
+    case Mode::Number::TAXI_HLOCK:
     case Mode::Number::AUTOTUNE:
     case Mode::Number::FLY_BY_WIRE_B:
     case Mode::Number::QSTABILIZE:
@@ -192,9 +193,15 @@ void GCS_MAVLINK_Plane::send_nav_controller_output() const
 
 void GCS_MAVLINK_Plane::send_steering() const
 {
+    float steer_target;
+    if (plane.control_mode == &plane.mode_taxi_hlock) {
+        steer_target = plane.steer_state.locked_course_cd * 0.01f;
+    } else {
+        steer_target = ((AP::ahrs().yaw_sensor + plane.steer_state.locked_course_err) * 0.01f);
+    }
     mavlink_msg_steering_send(
             chan,
-            (float) ((AP::ahrs().yaw_sensor + plane.steer_state.locked_course_err) * 0.01f),
+            (float) steer_target,
             (float) (plane.steering_control.steering * 0.01f)
             );
 }

@@ -167,6 +167,7 @@ public:
     friend class ModeQAcro;
     friend class ModeQAutotune;
     friend class ModeTakeoff;
+    friend class ModeTaxiHLock;
 
     Plane(void);
 
@@ -333,6 +334,7 @@ private:
     ModeQAcro mode_qacro;
     ModeQAutotune mode_qautotune;
     ModeTakeoff mode_takeoff;
+    ModeTaxiHLock mode_taxi_hlock;
 
     // This is the state of the flight control system
     // There are multiple states defined such as MANUAL, FBW-A, AUTO
@@ -477,10 +479,12 @@ private:
         // this is a 0..36000 value, or -1 for disabled
         int32_t hold_course_cd = -1;
 
-        // locked_course and locked_course_cd are used in stabilize mode 
+        // locked_course and locked_course_err are used in stabilize mode 
         // when ground steering is active, and for steering in auto-takeoff
         bool locked_course;
         float locked_course_err;
+        // Used by taxi_hlock mode only
+        int32_t locked_course_cd;
     } steer_state;
 
     // flight mode specific
@@ -1013,6 +1017,7 @@ private:
     void stabilize_stick_mixing_direct();
     void stabilize_stick_mixing_fbw();
     void stabilize_yaw(float speed_scaler);
+    void stabilize_taxi_hlock(float speed_scaler);
     void stabilize_training(float speed_scaler);
     void stabilize_acro(float speed_scaler);
     void calc_nav_yaw_coordinated(float speed_scaler);

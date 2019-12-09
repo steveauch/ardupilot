@@ -256,6 +256,27 @@ void Plane::stabilize_yaw(float speed_scaler)
     calc_nav_yaw_coordinated(speed_scaler);
 }
 
+/*
+   a special stabilization function for taxi hlock mode
+   */
+void Plane::stabilize_taxi_hlock(float speed_scaler) {
+    // Let user input affect lock direction
+    float steer_rate = (rudder_input()/4500.0f) * g.ground_steer_dps;
+    if(!is_zero(steer_rate)) {
+        steer_state.locked_course = true;
+    } else if (!steer_state.locked_course) {
+        // Lock if no stick input
+        steer_state.locked_course = true;
+        steer_state.locked_course_err = 0;
+        steer_state.locked_course_cd = plane.ahrs.yaw_sensor; 
+    }
+
+    // Calculate steering
+    int32_t yaw_error_cd = steer_state.locked_course_cd - plane.ahrs.yaw_sensor;
+    steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
+    steering_control.steering = constrain_int16(steering_control.steering, -4500, 4500);
+}
+
 
 /*
   a special stabilization function for training mode
@@ -406,6 +427,8 @@ void Plane::stabilize()
                 control_mode == &mode_qautotune) &&
                !quadplane.in_tailsitter_vtol_transition()) {
         quadplane.control_run();
+    } else if (control_mode == &mode_taxi_hlock) {
+        stabilize_taxi_hlock(speed_scaler);
     } else {
         if (g.stick_mixing == STICK_MIXING_FBW && control_mode != &mode_stabilize) {
             stabilize_stick_mixing_fbw();
