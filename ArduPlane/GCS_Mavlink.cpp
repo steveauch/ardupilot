@@ -197,7 +197,7 @@ void GCS_MAVLINK_Plane::send_steering() const
     if (plane.control_mode == &plane.mode_taxi_hlock) {
         steer_target = plane.steer_state.locked_course_cd * 0.01f;
     } else {
-        steer_target = ((AP::ahrs().yaw_sensor + plane.steer_state.locked_course_err) * 0.01f);
+        steer_target = ((AP::ahrs().yaw_sensor - ToDeg(plane.steer_state.locked_course_err) * 100.0f) * 0.01f);
     }
     mavlink_msg_steering_send(
             chan,

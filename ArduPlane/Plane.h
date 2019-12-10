@@ -1017,7 +1017,7 @@ private:
     void stabilize_stick_mixing_direct();
     void stabilize_stick_mixing_fbw();
     void stabilize_yaw(float speed_scaler);
-    void stabilize_taxi_hlock(float speed_scaler);
+    void stabilize_yaw_taxi_hlock(float speed_scaler);
     void stabilize_training(float speed_scaler);
     void stabilize_acro(float speed_scaler);
     void calc_nav_yaw_coordinated(float speed_scaler);

@@ -135,6 +135,7 @@ void Plane::stabilize_stick_mixing_direct()
     if (!stick_mixing_enabled() ||
         control_mode == &mode_acro ||
         control_mode == &mode_fbwa ||
+        control_mode == &mode_taxi_hlock ||
         control_mode == &mode_autotune ||
         control_mode == &mode_fbwb ||
         control_mode == &mode_cruise ||
@@ -166,6 +167,7 @@ void Plane::stabilize_stick_mixing_fbw()
     if (!stick_mixing_enabled() ||
         control_mode == &mode_acro ||
         control_mode == &mode_fbwa ||
+        control_mode == &mode_taxi_hlock ||
         control_mode == &mode_autotune ||
         control_mode == &mode_fbwb ||
         control_mode == &mode_cruise ||
@@ -259,7 +261,7 @@ void Plane::stabilize_yaw(float speed_scaler)
 /*
    a special stabilization function for taxi hlock mode
    */
-void Plane::stabilize_taxi_hlock(float speed_scaler) {
+void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
     // Let user input affect lock direction
     float steer_rate = (rudder_input()/4500.0f) * g.ground_steer_dps;
     if(!is_zero(steer_rate)) {
@@ -273,6 +275,7 @@ void Plane::stabilize_taxi_hlock(float speed_scaler) {
 
     // Calculate steering
     int32_t yaw_error_cd = steer_state.locked_course_cd - plane.ahrs.yaw_sensor;
+    steering_control.ground_steering = true;
     steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
     steering_control.steering = constrain_int16(steering_control.steering, -4500, 4500);
 }
@@ -427,8 +430,6 @@ void Plane::stabilize()
                 control_mode == &mode_qautotune) &&
                !quadplane.in_tailsitter_vtol_transition()) {
         quadplane.control_run();
-    } else if (control_mode == &mode_taxi_hlock) {
-        stabilize_taxi_hlock(speed_scaler);
     } else {
         if (g.stick_mixing == STICK_MIXING_FBW && control_mode != &mode_stabilize) {
             stabilize_stick_mixing_fbw();
@@ -438,7 +439,11 @@ void Plane::stabilize()
         if (g.stick_mixing == STICK_MIXING_DIRECT || control_mode == &mode_stabilize) {
             stabilize_stick_mixing_direct();
         }
-        stabilize_yaw(speed_scaler);
+        if (control_mode != &mode_taxi_hlock) {
+            stabilize_yaw(speed_scaler);
+        } else {
+            stabilize_yaw_taxi_hlock(speed_scaler);
+        }
     }
 
     /*

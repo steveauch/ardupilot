@@ -436,6 +436,7 @@ void Plane::set_servos_controlled(void)
                control_mode == &mode_training ||
                control_mode == &mode_acro ||
                control_mode == &mode_fbwa ||
+               control_mode == &mode_taxi_hlock ||
                control_mode == &mode_autotune) {
         // a manual throttle mode
         if (failsafe.throttle_counter) {
@@ -853,8 +854,8 @@ void Plane::update_throttle_hover() {
  */
 void Plane::servos_auto_trim(void)
 {
-    // only in auto modes and FBWA
-    if (!auto_throttle_mode && control_mode != &mode_fbwa) {
+    // only in auto modes, FBWA and TAXI_HLOCK
+    if (!auto_throttle_mode && control_mode != &mode_fbwa && control_mode != &mode_taxi_hlock) {
         return;
     }
     if (!hal.util->get_soft_armed()) {
