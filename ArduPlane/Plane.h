@@ -168,6 +168,7 @@ public:
     friend class ModeQAutotune;
     friend class ModeTakeoff;
     friend class ModeTaxiHLock;
+    friend class ModeDeadstop;
 
     Plane(void);
 
@@ -335,6 +336,7 @@ private:
     ModeQAutotune mode_qautotune;
     ModeTakeoff mode_takeoff;
     ModeTaxiHLock mode_taxi_hlock;
+    ModeDeadstop mode_deadstop;
 
     // This is the state of the flight control system
     // There are multiple states defined such as MANUAL, FBW-A, AUTO

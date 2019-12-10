@@ -76,6 +76,9 @@ Mode *Plane::mode_from_mode_num(const enum Mode::Number num)
     case Mode::Number::TAXI_HLOCK:
         ret = &mode_taxi_hlock;
         break;
+    case Mode::Number::DEADSTOP:
+        ret = &mode_deadstop;
+        break;
     }
     return ret;
 }

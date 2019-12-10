@@ -12,7 +12,6 @@ void Plane::failsafe_short_on_event(enum failsafe_state fstype, mode_reason_t re
     case Mode::Number::STABILIZE:
     case Mode::Number::ACRO:
     case Mode::Number::FLY_BY_WIRE_A:
-    case Mode::Number::TAXI_HLOCK:
     case Mode::Number::AUTOTUNE:
     case Mode::Number::FLY_BY_WIRE_B:
     case Mode::Number::CRUISE:
@@ -61,6 +60,10 @@ void Plane::failsafe_short_on_event(enum failsafe_state fstype, mode_reason_t re
     case Mode::Number::QLAND:
     case Mode::Number::QRTL:
     case Mode::Number::INITIALISING:
+    case Mode::Number::DEADSTOP:
+        break;
+    case Mode::Number::TAXI_HLOCK:
+        set_mode(mode_deadstop, reason);
         break;
     }
     gcs().send_text(MAV_SEVERITY_INFO, "Flight mode = %u", (unsigned)control_mode->mode_number());
@@ -79,7 +82,6 @@ void Plane::failsafe_long_on_event(enum failsafe_state fstype, mode_reason_t rea
     case Mode::Number::STABILIZE:
     case Mode::Number::ACRO:
     case Mode::Number::FLY_BY_WIRE_A:
-    case Mode::Number::TAXI_HLOCK:
     case Mode::Number::AUTOTUNE:
     case Mode::Number::FLY_BY_WIRE_B:
     case Mode::Number::CRUISE:
@@ -128,6 +130,10 @@ void Plane::failsafe_long_on_event(enum failsafe_state fstype, mode_reason_t rea
     case Mode::Number::QRTL:
     case Mode::Number::TAKEOFF:
     case Mode::Number::INITIALISING:
+    case Mode::Number::DEADSTOP:
+        break;
+    case Mode::Number::TAXI_HLOCK:
+        set_mode(mode_deadstop, reason);
         break;
     }
     gcs().send_text(MAV_SEVERITY_INFO, "Flight mode = %u", (unsigned)control_mode->mode_number());

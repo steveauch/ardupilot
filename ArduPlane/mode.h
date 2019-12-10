@@ -39,6 +39,7 @@ public:
         QAUTOTUNE     = 22,
         QACRO         = 23,
         TAXI_HLOCK    = 24,
+        DEADSTOP      = 25,
     };
 
     // Constructor
@@ -212,6 +213,21 @@ protected:
     bool _enter() override;
 };
 
+class ModeDeadstop : public Mode
+{
+public:
+
+    Number mode_number() const override { return Number::DEADSTOP; }
+    const char *name() const override { return "DEADSTOP"; }
+    const char *name4() const override { return "DSTP"; }
+
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+
+protected:
+
+    bool _enter() override;
+};
 class ModeStabilize : public Mode
 {
 public:
