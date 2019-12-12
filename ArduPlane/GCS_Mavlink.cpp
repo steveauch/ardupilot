@@ -582,7 +582,6 @@ static const ap_message STREAM_EXTENDED_STATUS_msgs[] = {
     MSG_NAV_CONTROLLER_OUTPUT,
     MSG_FENCE_STATUS,
     MSG_POSITION_TARGET_GLOBAL_INT,
-    MSG_STEERING,
 };
 static const ap_message STREAM_POSITION_msgs[] = {
     MSG_LOCATION,
@@ -606,6 +605,7 @@ static const ap_message STREAM_EXTRA1_msgs[] = {
     MSG_PID_TUNING,
     MSG_LANDING,
     MSG_ESC_TELEMETRY,
+    MSG_STEERING,
 };
 static const ap_message STREAM_EXTRA2_msgs[] = {
     MSG_VFR_HUD
