@@ -265,7 +265,7 @@ void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
     // Let user input affect lock direction
     float steer_rate = (rudder_input()/4500.0f) * g.ground_steer_dps;
     if(!is_zero(steer_rate)) {
-        steer_state.locked_course = true;
+        steer_state.locked_course = false;
     } else if (!steer_state.locked_course) {
         // Lock if no stick input
         steer_state.locked_course = true;
@@ -274,9 +274,14 @@ void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
     }
 
     // Calculate steering
-    int32_t yaw_error_cd = steer_state.locked_course_cd - plane.ahrs.yaw_sensor;
-    steering_control.ground_steering = true;
-    steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
+    if (steer_state.locked_course) {
+        int32_t yaw_error_cd = steer_state.locked_course_cd - plane.ahrs.yaw_sensor;
+        yaw_error_cd = wrap_180_cd(yaw_error_cd);
+        steering_control.ground_steering = true;
+        steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
+    } else {
+        steering_control.steering = steerController.get_steering_out_rate(steer_rate);
+    }
     steering_control.steering = constrain_int16(steering_control.steering, -4500, 4500);
 }
 
