@@ -262,6 +262,29 @@ void Plane::stabilize_yaw(float speed_scaler)
    a special stabilization function for taxi hlock mode
    */
 void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
+    enum HeadingType {COMPASS, AHRS};
+    static HeadingType heading_type = COMPASS;
+
+    int mag_cd = wrap_360_cd(-plane.compass.calculate_heading(ahrs.get_rotation_body_to_ned()) * 180 / M_PI * 100);
+
+    // Need to adjust course on heading type change
+    if (gps.ground_speed() < 3 && heading_type == AHRS){
+        gcs().send_text(MAV_SEVERITY_INFO, "Speed too low, switching to compass ground steering.");
+        heading_type = COMPASS;
+        steer_state.locked_course_cd += mag_cd - plane.ahrs.yaw_sensor;
+    } else if (heading_type == COMPASS && gps.status() >= AP_GPS::GPS_OK_FIX_2D && gps.ground_speed() > 5) {
+        gcs().send_text(MAV_SEVERITY_INFO, "Switching to full AHRS ground steering.");
+        heading_type = AHRS;
+        steer_state.locked_course_cd += plane.ahrs.yaw_sensor - mag_cd;
+    }
+
+    int yaw_cd;
+    if(heading_type == AHRS) {
+        yaw_cd = plane.ahrs.yaw_sensor;
+    } else {
+        yaw_cd = mag_cd;
+    }
+
     // Let user input affect lock direction
     float steer_rate = (rudder_input()/4500.0f) * g.ground_steer_dps;
     if(!is_zero(steer_rate)) {
@@ -270,12 +293,13 @@ void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
         // Lock if no stick input
         steer_state.locked_course = true;
         steer_state.locked_course_err = 0;
-        steer_state.locked_course_cd = plane.ahrs.yaw_sensor; 
+        steer_state.locked_course_cd = yaw_cd;
     }
 
     // Calculate steering
+
     if (steer_state.locked_course) {
-        int32_t yaw_error_cd = steer_state.locked_course_cd - plane.ahrs.yaw_sensor;
+        int32_t yaw_error_cd = steer_state.locked_course_cd - yaw_cd;
         yaw_error_cd = wrap_180_cd(yaw_error_cd);
         steering_control.ground_steering = true;
         steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
