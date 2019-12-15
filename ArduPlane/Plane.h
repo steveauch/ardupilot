@@ -169,6 +169,7 @@ public:
     friend class ModeTakeoff;
     friend class ModeTaxiHLock;
     friend class ModeDeadstop;
+    friend class ModeTaxiWP;
 
     Plane(void);
 
@@ -336,6 +337,7 @@ private:
     ModeQAutotune mode_qautotune;
     ModeTakeoff mode_takeoff;
     ModeTaxiHLock mode_taxi_hlock;
+    ModeTaxiWP mode_taxi_wp;
     ModeDeadstop mode_deadstop;
 
     // This is the state of the flight control system
@@ -1019,7 +1021,7 @@ private:
     void stabilize_stick_mixing_direct();
     void stabilize_stick_mixing_fbw();
     void stabilize_yaw(float speed_scaler);
-    void stabilize_yaw_taxi_hlock(float speed_scaler);
+    void stabilize_yaw_taxi(float speed_scaler);
     void stabilize_training(float speed_scaler);
     void stabilize_acro(float speed_scaler);
     void calc_nav_yaw_coordinated(float speed_scaler);

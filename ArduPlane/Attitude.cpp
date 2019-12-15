@@ -136,6 +136,7 @@ void Plane::stabilize_stick_mixing_direct()
         control_mode == &mode_acro ||
         control_mode == &mode_fbwa ||
         control_mode == &mode_taxi_hlock ||
+        control_mode == &mode_taxi_wp ||
         control_mode == &mode_autotune ||
         control_mode == &mode_fbwb ||
         control_mode == &mode_cruise ||
@@ -168,6 +169,7 @@ void Plane::stabilize_stick_mixing_fbw()
         control_mode == &mode_acro ||
         control_mode == &mode_fbwa ||
         control_mode == &mode_taxi_hlock ||
+        control_mode == &mode_taxi_wp ||
         control_mode == &mode_autotune ||
         control_mode == &mode_fbwb ||
         control_mode == &mode_cruise ||
@@ -261,12 +263,14 @@ void Plane::stabilize_yaw(float speed_scaler)
 /*
    a special stabilization function for taxi hlock mode
    */
-void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
+void Plane::stabilize_yaw_taxi(float speed_scaler) {
     enum HeadingType {COMPASS, AHRS};
     static HeadingType heading_type = COMPASS;
 
     int mag_cd = wrap_360_cd(-plane.compass.calculate_heading(ahrs.get_rotation_body_to_ned()) * 180 / M_PI * 100);
 
+
+    // HEADING LOCK
     // Need to adjust course on heading type change
     if (gps.ground_speed() < 3 && heading_type == AHRS){
         gcs().send_text(MAV_SEVERITY_INFO, "Speed too low, switching to compass ground steering.");
@@ -285,6 +289,7 @@ void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
         yaw_cd = mag_cd;
     }
 
+    // HEADING LOCK
     // Let user input affect lock direction
     float steer_rate = (rudder_input()/4500.0f) * g.ground_steer_dps;
     if(!is_zero(steer_rate)) {
@@ -296,10 +301,17 @@ void Plane::stabilize_yaw_taxi_hlock(float speed_scaler) {
         steer_state.locked_course_cd = yaw_cd;
     }
 
+    int32_t target_heading = 0;
+    if (control_mode == &mode_taxi_hlock) {
+        target_heading = steer_state.locked_course_cd;
+    } else if(control_mode == &mode_taxi_wp){
+        target_heading = plane.current_loc.get_bearing_to(plane.next_WP_loc);
+    }
+
     // Calculate steering
 
     if (steer_state.locked_course) {
-        int32_t yaw_error_cd = steer_state.locked_course_cd - yaw_cd;
+        int32_t yaw_error_cd = target_heading - yaw_cd;
         yaw_error_cd = wrap_180_cd(yaw_error_cd);
         steering_control.ground_steering = true;
         steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
@@ -468,10 +480,10 @@ void Plane::stabilize()
         if (g.stick_mixing == STICK_MIXING_DIRECT || control_mode == &mode_stabilize) {
             stabilize_stick_mixing_direct();
         }
-        if (control_mode != &mode_taxi_hlock) {
+        if (control_mode != &mode_taxi_hlock && control_mode != &mode_taxi_wp) {
             stabilize_yaw(speed_scaler);
         } else {
-            stabilize_yaw_taxi_hlock(speed_scaler);
+            stabilize_yaw_taxi(speed_scaler);
         }
     }
 

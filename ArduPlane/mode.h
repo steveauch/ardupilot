@@ -40,6 +40,7 @@ public:
         QACRO         = 23,
         TAXI_HLOCK    = 24,
         DEADSTOP      = 25,
+        TAXI_WP       = 26,
     };
 
     // Constructor
@@ -505,6 +506,23 @@ public:
     Number mode_number() const override { return Number::TAXI_HLOCK; }
     const char *name() const override { return "TAXI_HLOCK"; }
     const char *name4() const override { return "THLK"; }
+
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+
+    bool _enter() override;
+
+protected:
+
+};
+
+class ModeTaxiWP : public Mode
+{
+public:
+
+    Number mode_number() const override { return Number::TAXI_WP; }
+    const char *name() const override { return "TAXI_WP"; }
+    const char *name4() const override { return "TXWP"; }
 
     // methods that affect movement of the vehicle in this mode
     void update() override;

@@ -4,6 +4,8 @@
 bool ModeDeadstop::_enter()
 {
     plane.arming.disarm();
+    plane.auto_navigation_mode = false;
+    plane.auto_throttle_mode = false;
     return true;
 }
 
