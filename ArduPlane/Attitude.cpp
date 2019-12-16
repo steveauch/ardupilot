@@ -267,27 +267,34 @@ void Plane::stabilize_yaw_taxi(float speed_scaler) {
     enum HeadingType {COMPASS, AHRS};
     static HeadingType heading_type = COMPASS;
 
-    int mag_cd = wrap_360_cd(-plane.compass.calculate_heading(ahrs.get_rotation_body_to_ned()) * 180 / M_PI * 100);
+    int32_t mag_cd = wrap_360_cd(plane.compass.calculate_heading(ahrs.get_rotation_body_to_ned()) * 180.0 / M_PI * 100.0);
 
 
     // HEADING LOCK
     // Need to adjust course on heading type change
-    if (gps.ground_speed() < 3 && heading_type == AHRS){
+    /*
+    if (gps.ground_speed() < 5 && heading_type == AHRS){
         gcs().send_text(MAV_SEVERITY_INFO, "Speed too low, switching to compass ground steering.");
         heading_type = COMPASS;
         steer_state.locked_course_cd += mag_cd - plane.ahrs.yaw_sensor;
+        steer_state.locked_course_cd = wrap_360_cd(steer_state.locked_course_cd);
     } else if (heading_type == COMPASS && gps.status() >= AP_GPS::GPS_OK_FIX_2D && gps.ground_speed() > 5) {
         gcs().send_text(MAV_SEVERITY_INFO, "Switching to full AHRS ground steering.");
         heading_type = AHRS;
         steer_state.locked_course_cd += plane.ahrs.yaw_sensor - mag_cd;
+        steer_state.locked_course_cd = wrap_360_cd(steer_state.locked_course_cd);
     }
+    */
+    heading_type = AHRS;
 
     int yaw_cd;
     if(heading_type == AHRS) {
-        yaw_cd = plane.ahrs.yaw_sensor;
+        yaw_cd = wrap_360_cd(plane.ahrs.yaw_sensor);
     } else {
         yaw_cd = mag_cd;
     }
+
+    steer_state.steer_heading_cd = yaw_cd;
 
     // HEADING LOCK
     // Let user input affect lock direction
@@ -305,15 +312,18 @@ void Plane::stabilize_yaw_taxi(float speed_scaler) {
     if (control_mode == &mode_taxi_hlock) {
         target_heading = steer_state.locked_course_cd;
     } else if(control_mode == &mode_taxi_wp){
-        target_heading = plane.current_loc.get_bearing_to(plane.next_WP_loc);
+        target_heading = wrap_360_cd(plane.current_loc.get_bearing_to(plane.next_WP_loc));
     }
+
+    steer_state.locked_course_cd = target_heading;
 
     // Calculate steering
 
+    steering_control.ground_steering = true;
     if (steer_state.locked_course) {
         int32_t yaw_error_cd = target_heading - yaw_cd;
         yaw_error_cd = wrap_180_cd(yaw_error_cd);
-        steering_control.ground_steering = true;
+        steer_state.locked_course_err = yaw_error_cd;
         steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
     } else {
         steering_control.steering = steerController.get_steering_out_rate(steer_rate);

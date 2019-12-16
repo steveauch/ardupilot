@@ -489,6 +489,7 @@ private:
         float locked_course_err;
         // Used by taxi_hlock mode only
         int32_t locked_course_cd;
+        int32_t steer_heading_cd;
     } steer_state;
 
     // flight mode specific
