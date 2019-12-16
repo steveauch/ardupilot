@@ -276,28 +276,24 @@ void Plane::stabilize_yaw_taxi(float speed_scaler) {
     if (gps.ground_speed() < 5 && heading_type == AHRS){
         gcs().send_text(MAV_SEVERITY_INFO, "Speed too low, switching to compass ground steering.");
         heading_type = COMPASS;
-        steer_state.locked_course_cd += mag_cd - plane.ahrs.yaw_sensor;
-        steer_state.locked_course_cd = wrap_360_cd(steer_state.locked_course_cd);
+        steer_state.target_heading_cd += mag_cd - plane.ahrs.yaw_sensor;
+        steer_state.target_heading_cd = wrap_360_cd(steer_state.locked_course_cd);
     } else if (heading_type == COMPASS && gps.status() >= AP_GPS::GPS_OK_FIX_2D && gps.ground_speed() > 5) {
         gcs().send_text(MAV_SEVERITY_INFO, "Switching to full AHRS ground steering.");
         heading_type = AHRS;
-        steer_state.locked_course_cd += plane.ahrs.yaw_sensor - mag_cd;
-        steer_state.locked_course_cd = wrap_360_cd(steer_state.locked_course_cd);
+        steer_state.target_heading_cd += plane.ahrs.yaw_sensor - mag_cd;
+        steer_state.target_heading_cd = wrap_360_cd(steer_state.locked_course_cd);
     }
     */
-    heading_type = AHRS;
+    heading_type = AHRS; /*Delete if reinstating mag lock*/
 
-    int yaw_cd;
     if(heading_type == AHRS) {
-        yaw_cd = wrap_360_cd(plane.ahrs.yaw_sensor);
+        steer_state.steer_heading_cd = plane.ahrs.yaw_sensor;
     } else {
-        yaw_cd = mag_cd;
+        steer_state.steer_heading_cd = mag_cd;
     }
 
-    steer_state.steer_heading_cd = yaw_cd;
-
-    // HEADING LOCK
-    // Let user input affect lock direction
+    // Lock on no stick input, else allow manual steering
     float steer_rate = (rudder_input()/4500.0f) * g.ground_steer_dps;
     if(!is_zero(steer_rate)) {
         steer_state.locked_course = false;
@@ -305,30 +301,22 @@ void Plane::stabilize_yaw_taxi(float speed_scaler) {
         // Lock if no stick input
         steer_state.locked_course = true;
         steer_state.locked_course_err = 0;
-        steer_state.locked_course_cd = yaw_cd;
+        steer_state.target_heading_cd = steer_state.steer_heading_cd;
     }
 
-    int32_t target_heading = 0;
-    if (control_mode == &mode_taxi_hlock) {
-        target_heading = steer_state.locked_course_cd;
-    } else if(control_mode == &mode_taxi_wp){
-        target_heading = wrap_360_cd(plane.current_loc.get_bearing_to(plane.next_WP_loc));
+    // Use waypoint for heading in taxi_wp mode
+    if(control_mode == &mode_taxi_wp){
+        steer_state.target_heading_cd = plane.current_loc.get_bearing_to(plane.next_WP_loc);
     }
-
-    steer_state.locked_course_cd = target_heading;
 
     // Calculate steering
-
     steering_control.ground_steering = true;
     if (steer_state.locked_course) {
-        int32_t yaw_error_cd = target_heading - yaw_cd;
-        yaw_error_cd = wrap_180_cd(yaw_error_cd);
-        steer_state.locked_course_err = yaw_error_cd;
-        steering_control.steering = steerController.get_steering_out_angle_error(yaw_error_cd);
+        steer_state.locked_course_err = wrap_180_cd(steer_state.target_heading_cd - steer_state.steer_heading_cd);
+        steering_control.steering = steerController.get_steering_out_angle_error(steer_state.locked_course_err);
     } else {
         steering_control.steering = steerController.get_steering_out_rate(steer_rate);
     }
-    steering_control.steering = constrain_int16(steering_control.steering, -4500, 4500);
 }
 
 

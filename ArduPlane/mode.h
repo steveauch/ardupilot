@@ -499,7 +499,7 @@ protected:
     bool _enter() override;
 };
 
-class ModeTaxiHLock : public Mode
+class ModeTaxiHLock : public ModeFBWA
 {
 public:
 
@@ -507,16 +507,15 @@ public:
     const char *name() const override { return "TAXI_HLOCK"; }
     const char *name4() const override { return "THLK"; }
 
-    // methods that affect movement of the vehicle in this mode
-    void update() override;
-
-    bool _enter() override;
+    // Method overrides. Currently these behaviours match FBWA
+    //void update() override;
+    //bool _enter() override;
 
 protected:
 
 };
 
-class ModeTaxiWP : public Mode
+class ModeTaxiWP : public ModeTaxiHLock
 {
 public:
 
@@ -525,8 +524,6 @@ public:
     const char *name4() const override { return "TXWP"; }
 
     // methods that affect movement of the vehicle in this mode
-    void update() override;
-
     bool _enter() override;
 
 protected:

@@ -487,8 +487,9 @@ private:
         // when ground steering is active, and for steering in auto-takeoff
         bool locked_course;
         float locked_course_err;
-        // Used by taxi_hlock mode only
-        int32_t locked_course_cd;
+        // Intended heading in taxi modes
+        int32_t target_heading_cd;
+        // Current heading as used by steering controller in taxi modes
         int32_t steer_heading_cd;
     } steer_state;
 
