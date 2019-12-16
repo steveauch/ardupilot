@@ -204,7 +204,9 @@ void GCS_MAVLINK_Plane::send_steering() const
     mavlink_msg_steering_send(
             chan,
             (float) steer_target,
-            (float) (plane.steering_control.steering * 0.01f)
+            (float) (plane.steering_control.steering * 0.01f),
+            (float) (plane.steer_state.steer_heading_cd * 0.01f),
+            (float) (plane.steer_state.locked_course_err * 0.01f)
             );
 }
 
