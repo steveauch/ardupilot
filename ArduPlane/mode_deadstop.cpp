@@ -6,6 +6,7 @@ bool ModeDeadstop::_enter()
     plane.arming.disarm();
     plane.auto_navigation_mode = false;
     plane.auto_throttle_mode = false;
+    plane.gcs().send_text(MAV_SEVERITY_WARNING, "Dropped to deadstop mode");
     return true;
 }
 

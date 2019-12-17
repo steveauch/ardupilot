@@ -168,6 +168,7 @@ public:
     friend class ModeQAutotune;
     friend class ModeTakeoff;
     friend class ModeTaxiHLock;
+    friend class ModeTaxiWP;
     friend class ModeDeadstop;
     friend class ModeTaxiWP;
 

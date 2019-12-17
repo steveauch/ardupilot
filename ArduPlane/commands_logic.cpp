@@ -934,7 +934,7 @@ void Plane::do_set_home(const AP_Mission::Mission_Command& cmd)
 //      we double check that the flight mode is AUTO to avoid the possibility of ap-mission triggering actions while we're not in AUTO mode
 bool Plane::start_command_callback(const AP_Mission::Mission_Command &cmd)
 {
-    if (control_mode == &mode_auto) {
+    if (control_mode == &mode_auto || control_mode == &mode_taxi_wp) {
         return start_command(cmd);
     }
     return true;

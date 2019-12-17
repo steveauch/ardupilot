@@ -196,7 +196,7 @@ void GCS_MAVLINK_Plane::send_nav_controller_output() const
 void GCS_MAVLINK_Plane::send_steering() const
 {
     float steer_target;
-    if (plane.control_mode == &plane.mode_taxi_hlock) {
+    if (plane.control_mode == &plane.mode_taxi_hlock || plane.control_mode == &plane.mode_taxi_wp) {
         steer_target = plane.steer_state.target_heading_cd * 0.01f;
     } else {
         steer_target = ((AP::ahrs().yaw_sensor - ToDeg(plane.steer_state.locked_course_err) * 100.0f) * 0.01f);
@@ -1402,7 +1402,7 @@ void GCS_MAVLINK_Plane::handle_mission_set_current(AP_Mission &mission, const ma
 {
     plane.auto_state.next_wp_crosstrack = false;
     GCS_MAVLINK::handle_mission_set_current(mission, msg);
-    if (plane.control_mode == &plane.mode_auto && plane.mission.state() == AP_Mission::MISSION_STOPPED) {
+    if ((plane.control_mode == &plane.mode_auto || plane.control_mode == &plane.mode_taxi_wp) && plane.mission.state() == AP_Mission::MISSION_STOPPED) {
         plane.mission.resume();
     }
 }
