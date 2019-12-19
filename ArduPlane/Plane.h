@@ -169,8 +169,8 @@ public:
     friend class ModeTakeoff;
     friend class ModeTaxiHLock;
     friend class ModeTaxiWP;
+    friend class ModeTaxiLine;
     friend class ModeDeadstop;
-    friend class ModeTaxiWP;
 
     Plane(void);
 
@@ -339,6 +339,7 @@ private:
     ModeTakeoff mode_takeoff;
     ModeTaxiHLock mode_taxi_hlock;
     ModeTaxiWP mode_taxi_wp;
+    ModeTaxiLine mode_taxi_line;
     ModeDeadstop mode_deadstop;
 
     // This is the state of the flight control system

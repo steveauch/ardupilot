@@ -438,6 +438,7 @@ void Plane::update_navigation()
     switch (control_mode->mode_number()) {
     case Mode::Number::AUTO:
     case Mode::Number::TAXI_WP:
+    case Mode::Number::TAXI_LINE:
         if (ahrs.home_is_set()) {
             mission.update();
         }

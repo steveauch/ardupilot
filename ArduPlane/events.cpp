@@ -64,6 +64,7 @@ void Plane::failsafe_short_on_event(enum failsafe_state fstype, mode_reason_t re
         break;
     case Mode::Number::TAXI_HLOCK:
     case Mode::Number::TAXI_WP:
+    case Mode::Number::TAXI_LINE:
         set_mode(mode_deadstop, reason);
         break;
     }
@@ -135,6 +136,7 @@ void Plane::failsafe_long_on_event(enum failsafe_state fstype, mode_reason_t rea
         break;
     case Mode::Number::TAXI_HLOCK:
     case Mode::Number::TAXI_WP:
+    case Mode::Number::TAXI_LINE:
         set_mode(mode_deadstop, reason);
         break;
     }

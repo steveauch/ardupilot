@@ -137,6 +137,7 @@ void Plane::stabilize_stick_mixing_direct()
         control_mode == &mode_fbwa ||
         control_mode == &mode_taxi_hlock ||
         control_mode == &mode_taxi_wp ||
+        control_mode == &mode_taxi_line ||
         control_mode == &mode_autotune ||
         control_mode == &mode_fbwb ||
         control_mode == &mode_cruise ||
@@ -170,6 +171,7 @@ void Plane::stabilize_stick_mixing_fbw()
         control_mode == &mode_fbwa ||
         control_mode == &mode_taxi_hlock ||
         control_mode == &mode_taxi_wp ||
+        control_mode == &mode_taxi_line ||
         control_mode == &mode_autotune ||
         control_mode == &mode_fbwb ||
         control_mode == &mode_cruise ||
@@ -307,6 +309,8 @@ void Plane::stabilize_yaw_taxi(float speed_scaler) {
     // Use waypoint for heading in taxi_wp mode
     if(control_mode == &mode_taxi_wp){
         steer_state.target_heading_cd = plane.current_loc.get_bearing_to(plane.next_WP_loc);
+    } else if (control_mode == &mode_taxi_line) {
+        steer_state.target_heading_cd = wrap_360_cd(plane.nav_controller->nav_bearing_cd());
     }
 
     // Calculate steering
@@ -478,7 +482,7 @@ void Plane::stabilize()
         if (g.stick_mixing == STICK_MIXING_DIRECT || control_mode == &mode_stabilize) {
             stabilize_stick_mixing_direct();
         }
-        if (control_mode != &mode_taxi_hlock && control_mode != &mode_taxi_wp) {
+        if (control_mode != &mode_taxi_hlock && control_mode != &mode_taxi_wp && control_mode != &mode_taxi_line) {
             stabilize_yaw(speed_scaler);
         } else {
             stabilize_yaw_taxi(speed_scaler);

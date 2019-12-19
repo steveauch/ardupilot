@@ -41,6 +41,7 @@ public:
         TAXI_HLOCK    = 24,
         DEADSTOP      = 25,
         TAXI_WP       = 26,
+        TAXI_LINE     = 27,
     };
 
     // Constructor
@@ -520,6 +521,21 @@ class ModeTaxiWP : public ModeTaxiHLock
 public:
 
     Number mode_number() const override { return Number::TAXI_WP; }
+    const char *name() const override { return "TAXI_WP"; }
+    const char *name4() const override { return "TXWP"; }
+
+    // methods that affect movement of the vehicle in this mode
+    bool _enter() override;
+
+protected:
+
+};
+
+class ModeTaxiLine : public ModeTaxiWP
+{
+public:
+
+    Number mode_number() const override { return Number::TAXI_LINE; }
     const char *name() const override { return "TAXI_WP"; }
     const char *name4() const override { return "TXWP"; }
 

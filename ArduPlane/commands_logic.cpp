@@ -934,7 +934,7 @@ void Plane::do_set_home(const AP_Mission::Mission_Command& cmd)
 //      we double check that the flight mode is AUTO to avoid the possibility of ap-mission triggering actions while we're not in AUTO mode
 bool Plane::start_command_callback(const AP_Mission::Mission_Command &cmd)
 {
-    if (control_mode == &mode_auto || control_mode == &mode_taxi_wp) {
+    if (control_mode == &mode_auto || control_mode == &mode_taxi_wp || control_mode == &mode_taxi_line) {
         return start_command(cmd);
     }
     return true;
@@ -944,7 +944,7 @@ bool Plane::start_command_callback(const AP_Mission::Mission_Command &cmd)
 //      we double check that the flight mode is AUTO to avoid the possibility of ap-mission triggering actions while we're not in AUTO mode
 bool Plane::verify_command_callback(const AP_Mission::Mission_Command& cmd)
 {
-    if (control_mode == &mode_auto) {
+    if (control_mode == &mode_auto || control_mode == &mode_taxi_wp || control_mode == &mode_taxi_line) {
         bool cmd_complete = verify_command(cmd);
 
         // send message to GCS

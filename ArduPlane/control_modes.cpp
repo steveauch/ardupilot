@@ -82,6 +82,9 @@ Mode *Plane::mode_from_mode_num(const enum Mode::Number num)
     case Mode::Number::TAXI_WP:
         ret = &mode_taxi_wp;
         break;
+    case Mode::Number::TAXI_LINE:
+        ret = &mode_taxi_line;
+        break;
     }
     return ret;
 }

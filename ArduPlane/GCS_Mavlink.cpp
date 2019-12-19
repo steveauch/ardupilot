@@ -30,6 +30,7 @@ MAV_MODE GCS_MAVLINK_Plane::base_mode() const
     case Mode::Number::FLY_BY_WIRE_A:
     case Mode::Number::TAXI_HLOCK:
     case Mode::Number::TAXI_WP:
+    case Mode::Number::TAXI_LINE:
     case Mode::Number::AUTOTUNE:
     case Mode::Number::FLY_BY_WIRE_B:
     case Mode::Number::QSTABILIZE:
@@ -196,7 +197,9 @@ void GCS_MAVLINK_Plane::send_nav_controller_output() const
 void GCS_MAVLINK_Plane::send_steering() const
 {
     float steer_target;
-    if (plane.control_mode == &plane.mode_taxi_hlock || plane.control_mode == &plane.mode_taxi_wp) {
+    if (plane.control_mode == &plane.mode_taxi_hlock 
+            || plane.control_mode == &plane.mode_taxi_wp 
+            || plane.control_mode == &plane.mode_taxi_line) {
         steer_target = plane.steer_state.target_heading_cd * 0.01f;
     } else {
         steer_target = ((AP::ahrs().yaw_sensor - ToDeg(plane.steer_state.locked_course_err) * 100.0f) * 0.01f);
@@ -1402,7 +1405,7 @@ void GCS_MAVLINK_Plane::handle_mission_set_current(AP_Mission &mission, const ma
 {
     plane.auto_state.next_wp_crosstrack = false;
     GCS_MAVLINK::handle_mission_set_current(mission, msg);
-    if ((plane.control_mode == &plane.mode_auto || plane.control_mode == &plane.mode_taxi_wp) && plane.mission.state() == AP_Mission::MISSION_STOPPED) {
+    if ((plane.control_mode == &plane.mode_auto || plane.control_mode == &plane.mode_taxi_wp || plane.control_mode == &plane.mode_taxi_line) && plane.mission.state() == AP_Mission::MISSION_STOPPED) {
         plane.mission.resume();
     }
 }
