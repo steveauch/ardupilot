@@ -386,6 +386,12 @@ SRV_Channels::set_output_limit(SRV_Channel::Aux_servo_function_t function, SRV_C
                     // also have to override radio_in
                     cin->set_radio_in(pwm);
                 }
+            } else if (c.function.get() >= SRV_Channel::k_rcin1 && c.function.get() <= SRV_Channel::k_rcin16){
+                RC_Channel *cin = rc().channel(c.function.get() - SRV_Channel::k_rcin1);
+                    if(cin != nullptr) {
+                        // Same for rcin functions, but different value
+                        cin->set_radio_in(pwm);
+                    }
             }
         }
     }
