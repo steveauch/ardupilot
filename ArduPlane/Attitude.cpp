@@ -508,6 +508,9 @@ void Plane::stabilize()
             steerController.reset_I();            
         }
     }
+
+    // Keep track of steering in any mode that does stabilization
+    plane.Log_Write_Steer();
 }
 
 

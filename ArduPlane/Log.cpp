@@ -235,6 +235,27 @@ void Plane::Log_Write_AETR()
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
+struct PACKED log_Steer {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float target_heading;
+    float steer_cmd;
+    float steer_heading;
+    float steer_err;
+};
+
+void Plane::Log_Write_Steer() {
+    struct log_Steer pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_STEER_MSG),
+        time_us : AP_HAL::micros64(),
+        plane.steer_state.target_heading_cd * 0.01f,
+        (float) (plane.steering_control.steering * 0.01f),
+        (float) (plane.steer_state.steer_heading_cd * 0.01f),
+        (float) (plane.steer_state.locked_course_err * 0.01f)
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
 void Plane::Log_Write_RC(void)
 {
     logger.Write_RCIN();
@@ -276,6 +297,8 @@ const struct LogStructure Plane::log_structure[] = {
       "PIQA", PID_FMT,  PID_LABELS, PID_UNITS, PID_MULTS }, \
     { LOG_AETR_MSG, sizeof(log_AETR), \
       "AETR", "Qhhhhh",  "TimeUS,Ail,Elev,Thr,Rudd,Flap", "s-----", "F-----" },  \
+    { LOG_STEER_MSG, sizeof(log_Steer), \
+      "STEE", "Qffff",  "TimeUS,TargetHdg,WheelAng,Hdg,HdgErr", "sdddd", "F0000" },  \
 };
 
 void Plane::Log_Write_Vehicle_Startup_Messages()
