@@ -15,7 +15,7 @@ bool ModeDeadstop::_enter()
 void ModeDeadstop::update()
 {
     // Elevator down
-    SRV_Channels::set_output_limit(SRV_Channel::k_elevator, SRV_Channel::SRV_CHANNEL_LIMIT_MIN);
+    SRV_Channels::set_output_limit(SRV_Channel::k_elevator, SRV_Channel::Limit::MAX);
 
     // Throttle down
     if (plane.have_reverse_thrust()) {
@@ -31,7 +31,7 @@ void ModeDeadstop::update()
     }
 
     // Brakes on full
-    SRV_Channels::set_output_limit(SRV_Channel::k_rcin6, SRV_Channel::Limit::MAX);
+    SRV_Channels::set_output_limit(SRV_Channel::k_rcin6, SRV_Channel::Limit::MIN);
 
     plane.servos_output();
 
