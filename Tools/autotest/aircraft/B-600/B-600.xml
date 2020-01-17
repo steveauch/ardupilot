@@ -70,38 +70,6 @@
 
  <ground_reactions>
 
-	 <contact type="BOGEY" name="LEFT_AFT">
-		 <location unit="M">
-			 <x> 0.471 </x>
-			 <y> -0.912</y>
-			 <z> -0.684 </z>
-		 </location>
-		 <static_friction>  1.00 </static_friction>
-		 <dynamic_friction> 0.50 </dynamic_friction>
-		 <rolling_friction> 0.004 </rolling_friction>
-		 <spring_coeff unit="N/M"> 7357.5 </spring_coeff>
-		 <damping_coeff unit="N/M/SEC"> 2207.25 </damping_coeff>
-		 <max_steer unit="DEG">0</max_steer>
-		 <brake_group>LEFT</brake_group>
-		 <retractable>0</retractable>
-	 </contact>
-
-	 <contact type="BOGEY" name="RIGHT_AFT">
-		 <location unit="M">
-			 <x> 0.471 </x>
-			 <y> 0.912 </y>
-			 <z> -0.684 </z>
-		 </location>
-		 <static_friction>  1.00 </static_friction>
-		 <dynamic_friction> 0.50 </dynamic_friction>
-		 <rolling_friction> 0.004 </rolling_friction>
-		 <spring_coeff unit="N/M"> 7357.5 </spring_coeff>
-		 <damping_coeff unit="N/M/SEC"> 2207.25 </damping_coeff>
-		 <max_steer unit="DEG">0</max_steer>
-		 <brake_group>RIGHT</brake_group>
-		 <retractable>0</retractable>
-	 </contact>
-
 	 <contact type="BOGEY" name="RIGHT_FORE">
 		 <location unit="M">
 			 <x> -0.285 </x>
@@ -131,6 +99,38 @@
 		 <damping_coeff unit="N/M/SEC"> 1103.625 </damping_coeff>
 		 <max_steer unit="DEG">7</max_steer>
 		 <brake_group>NONE</brake_group>
+		 <retractable>0</retractable>
+	 </contact>
+
+	 <contact type="BOGEY" name="LEFT_AFT">
+		 <location unit="M">
+			 <x> 0.471 </x>
+			 <y> -0.912</y>
+			 <z> -0.684 </z>
+		 </location>
+		 <static_friction>  1.00 </static_friction>
+		 <dynamic_friction> 0.50 </dynamic_friction>
+		 <rolling_friction> 0.004 </rolling_friction>
+		 <spring_coeff unit="N/M"> 7357.5 </spring_coeff>
+		 <damping_coeff unit="N/M/SEC"> 2207.25 </damping_coeff>
+		 <max_steer unit="DEG">0</max_steer>
+		 <brake_group>LEFT</brake_group>
+		 <retractable>0</retractable>
+	 </contact>
+
+	 <contact type="BOGEY" name="RIGHT_AFT">
+		 <location unit="M">
+			 <x> 0.471 </x>
+			 <y> 0.912 </y>
+			 <z> -0.684 </z>
+		 </location>
+		 <static_friction>  1.00 </static_friction>
+		 <dynamic_friction> 0.50 </dynamic_friction>
+		 <rolling_friction> 0.004 </rolling_friction>
+		 <spring_coeff unit="N/M"> 7357.5 </spring_coeff>
+		 <damping_coeff unit="N/M/SEC"> 2207.25 </damping_coeff>
+		 <max_steer unit="DEG">0</max_steer>
+		 <brake_group>RIGHT</brake_group>
 		 <retractable>0</retractable>
 	 </contact>
 
@@ -1189,7 +1189,8 @@
  </aerodynamics>
 
  <!-- Visualiser Output -->
- <!-- <output name="10.0.1.1" type="FLIGHTGEAR" port="7127" protocol="UDP" rate="200"/> -->
+ <output name="192.168.0.17" type="FLIGHTGEAR" port="7127" protocol="UDP" rate="200"/>
+ <!-- <output name="localhost" type="FLIGHTGEAR" port="7127" protocol="UDP" rate="200"/> -->
  <!-- Telnet Interface -->
- <input port="1137"/>
+ <!-- <input port="1137"/> -->
 </fdm_config>
