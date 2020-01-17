@@ -380,6 +380,8 @@ void JSBSim::send_servos(const struct sitl_input &input)
     float throttle = filtered_servo_range(input, 2);
     float rudder   = filtered_servo_angle(input, 3);
     float steer    = filtered_servo_angle(input, 4);
+    float kick     = filtered_servo_angle(input, 15);
+    if (kick < 0) kick = 0;
     if (frame == FRAME_ELEVON) {
         // fake an elevon plane
         float ch1 = aileron;
@@ -406,12 +408,14 @@ void JSBSim::send_servos(const struct sitl_input &input)
              "set atmosphere/wind-mag-fps %f\n"
              "set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps %f\n"
              "set atmosphere/turbulence/milspec/severity %f\n"
+             "set external_reactions/kick/magnitude %f\n"
              "iterate 1\n",
              aileron, elevator, rudder, throttle, steer,
              radians(input.wind.direction),
              wind_speed_fps,
              wind_speed_fps/3,
-             input.wind.turbulence);
+             input.wind.turbulence,
+             kick*100);
     ssize_t buflen = strlen(buf);
     ssize_t sent = sock_control.send(buf, buflen);
     free(buf);
