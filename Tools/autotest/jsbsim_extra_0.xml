@@ -1,0 +1,14 @@
+<!-- Edit this file to add extra scripting to /home/brisk/src/ardupilot/Tools/autotest/jsbsim_start_0.xml -->
+<event name="Kick">
+  <condition>velocities/u-fps ge 30.0</condition>
+  <set name="external_reactions/kick/magnitude" value="100"/>
+  <notify/>
+</event>
+
+<event name="End Kick">
+  <condition>velocities/u-fps ge 30.0</condition>
+  <delay>1</delay>
+  <set name="external_reactions/kick/magnitude" value="0"/>
+  <notify/>
+</event>
+
