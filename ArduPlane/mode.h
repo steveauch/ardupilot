@@ -509,7 +509,7 @@ public:
     const char *name4() const override { return "THLK"; }
 
     // Method overrides. Currently these behaviours match FBWA
-    //void update() override;
+    void update() override;
     //bool _enter() override;
 
 protected:
