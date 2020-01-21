@@ -478,7 +478,14 @@ void Plane::stabilize()
             stabilize_stick_mixing_fbw();
         }
         stabilize_roll(speed_scaler);
-        stabilize_pitch(speed_scaler);
+        if (control_mode == &mode_deadstop ||
+                control_mode == &mode_taxi_hlock ||
+                control_mode == &mode_taxi_wp ||
+                control_mode == &mode_taxi_line) {
+            SRV_Channels::set_output_limit(SRV_Channel::k_elevator, SRV_Channel::SRV_CHANNEL_LIMIT_MIN);
+        } else {
+            stabilize_pitch(speed_scaler);
+        }
         if (g.stick_mixing == STICK_MIXING_DIRECT || control_mode == &mode_stabilize) {
             stabilize_stick_mixing_direct();
         }
