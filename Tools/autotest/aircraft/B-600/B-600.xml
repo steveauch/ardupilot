@@ -49,17 +49,19 @@
 <!-- Numbers from Planemaker Model-->
 	 <ixx unit="KG*M2"> 67.24 </ixx>
 	 <iyy unit="KG*M2"> 50.24 </iyy>
-	 <izz unit="KG*M2"> 114.49 </izz>
-	 <emptywt unit="KG" >  50 </emptywt>
+     <izz unit="KG*M2"> 114.49 </izz>
+     <!-- Measured on 2019-05-22 -->
+	 <emptywt unit="KG" >  98.4 </emptywt>
 	 <location name="CG" unit="M">
-		 <!-- Assuming x_cg = 25%MAC -->
+         <!-- Flashing installed on 2019-05-22 to get CoG to spar position -->
 		 <x>  0.20774 </x>
 		 <y>   0.00 </y>
 		 <z>  -0.0 </z>
 		 <!--z>  -0.1825 </z-->
  </location>
  <pointmass name="Payload">
-	 <weight unit="KG"> 50 </weight>
+     <!-- 50kg total -->
+	 <weight unit="KG"> 0 </weight>
 	 <location name="POINTMASS" unit="M">
 		 <x>  0.20774 </x>
 		 <y>  0.00 </y>
@@ -70,6 +72,24 @@
 
  <ground_reactions>
 
+     <!-- Temporary centre-front wheel -->
+     <contact type="BOGEY" name="FORE">
+         <location unit="M">
+             <x>-0.359</x>
+             <y>0</y>
+             <z>-0.68</z>
+         </location>
+         <static_friction>  1.00 </static_friction>
+         <dynamic_friction> 0.50 </dynamic_friction>
+         <rolling_friction> 0.004 </rolling_friction>
+         <spring_coeff unit="N/M"> 3678.75 </spring_coeff>
+         <damping_coeff unit="N/M/SEC"> 1103.625 </damping_coeff>
+         <max_steer unit="DEG">7</max_steer>
+         <brake_group>NONE</brake_group>
+         <retractable>0</retractable>
+     </contact>
+
+     <!-- ORIGINAL WHEEL PLACEMENT
 	 <contact type="BOGEY" name="RIGHT_FORE">
 		 <location unit="M">
 			 <x> -0.285 </x>
@@ -101,6 +121,7 @@
 		 <brake_group>NONE</brake_group>
 		 <retractable>0</retractable>
 	 </contact>
+    -->
 
 	 <contact type="BOGEY" name="LEFT_AFT">
 		 <location unit="M">
@@ -248,8 +269,8 @@
 			 <z>   0.00 </z>
 		 </location>
 		 <capacity unit="N"> 196.2 </capacity>
-		 <!-- Crashes as larger values -->
-		 <contents unit="N"> 100 </contents>
+		 <!-- Crashes at larger values than 100 (maybe in old version of JSBSim) -->
+		 <contents unit="N"> 0 </contents>
 	 </tank>
 
  </propulsion>

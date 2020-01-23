@@ -4,7 +4,7 @@ ALT_CTRL_ALG       2
 BATT_MONITOR       4
 ARMING_CHECK       1
 RC2_REVERSED       1
-RC4_REVERSED       1
+RC4_REVERSED       0
 RC1_MAX         2000
 RC1_MIN         1000
 RC1_TRIM        1500
